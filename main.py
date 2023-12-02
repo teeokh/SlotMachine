@@ -1,6 +1,5 @@
 import random
 
-
 MAX_LINES = 3
 MAX_BET = 100
 MIN_BET = 1
@@ -9,7 +8,7 @@ ROWS = 3
 COLS = 3
 
 symbol_count = {  # Here we make a dictionary. The letters are the keys, the numbers are the values / how many times
-                  # in each col it shows
+    # in each col it shows
     "A": 2,
     "B": 4,
     "C": 6,
@@ -17,11 +16,37 @@ symbol_count = {  # Here we make a dictionary. The letters are the keys, the num
 
 }
 
+symbol_values = {
+    "A": 5,
+    "B": 4,
+    "C": 3,
+    "D": 2
+}
+
+
+def get_winnings(columns, lines, bet, values):
+    winnings = 0
+    winning_lines = []
+    for line in range(lines):
+        symbol = columns[0][line]  # We check that the first symbol in the row is same as the others
+        #  Since columns is a nested list, we access the first column using [0] then the
+        #  index [line] in that column. So we end up grabbing the first symbol of each column
+
+        for column in columns:  # Checks each symbol in one row/line, if they are not the same then breaks + no win
+            symbol_to_check = column[line]
+            if symbol != symbol_to_check:
+                break
+        else:
+            winnings += values[symbol] * bet
+            winning_lines.append(line + 1)  # This will add the line number to the list of winning lines
+
+    return winnings, winning_lines
+
 
 def get_slot_machine_spin(rows, cols, symbols):
     all_symbols = []
-    for symbol, symbol_count in symbols.items():   # Creates symbol_count as a local variable referencing the value
-        for _ in range(symbol_count):   # For A, symbol count is 2, so we add symbol 2 times (range = 2)
+    for symbol, symbol_count in symbols.items():  # Creates symbol_count as a local variable referencing the value
+        for _ in range(symbol_count):  # For A, symbol count is 2, so we add symbol 2 times (range = 2)
             all_symbols.append(symbol)
 
     columns = []
@@ -93,8 +118,7 @@ def get_bet():
     return amount
 
 
-def main():
-    balance = deposit()
+def spin(balance):
     lines = get_number_of_lines()
 
     while True:
@@ -109,6 +133,20 @@ def main():
 
     slots = get_slot_machine_spin(ROWS, COLS, symbol_count)
     print_slot_machine(slots)
+    winnings, winning_lines = get_winnings(slots, lines, bet, symbol_values)
+    print(f"You won ${winnings} from lines: ", *winning_lines)
+
+    return winnings - total_bet
+
+
+def main():
+    balance = deposit()
+    while True:
+        print(f"Current balance is ${balance}")
+        answer = input("Press enter to play. (q to quit)")
+        if answer == "q":
+            break
+        balance += spin(balance)
 
 
 main()
