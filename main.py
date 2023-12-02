@@ -42,9 +42,11 @@ def print_slot_machine(columns):
     for row in range(len(columns[0])):  # Columns is nested list, so first item will be the first singular column
         for i, column in enumerate(columns):  # Enumerate will give the index + the value, that's why we include `i`
             if i != len(columns) - 1:
-                print(column[row], "|")
+                print(column[row], end=" | ")  # end tells program what to end the line with
             else:
-                print(column[row])  # This means that we only put divider if we're not at last row of column
+                print(column[row], end="")  # This means that we only put divider if we're not at last row of column
+
+        print()  # Then at the end of the row, we can print the new line using default print
 
 
 def deposit():
@@ -104,6 +106,9 @@ def main():
             print(f"You cannot bet more than your balance. Your current balance is ${balance}")
 
     print(f"You are betting ${bet} on ${lines} lines. Total bet: ${total_bet}")
+
+    slots = get_slot_machine_spin(ROWS, COLS, symbol_count)
+    print_slot_machine(slots)
 
 
 main()
